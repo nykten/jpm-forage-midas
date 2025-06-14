@@ -3,6 +3,8 @@ package com.jpmc.midascore.service;
 import com.jpmc.midascore.foundation.Incentive;
 import com.jpmc.midascore.repository.TransactionRepository;
 import org.h2.engine.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +18,7 @@ import com.jpmc.midascore.repository.TransactionRepository;
 
 @Service
 public class TransactionService {
+    private static final Logger logger = LoggerFactory.getLogger(TransactionService.class);
     private final UserRepository userRepository;
     private final TransactionRepository transactionRepository;
     private final IncentiveService incentiveService;
@@ -29,7 +32,8 @@ public class TransactionService {
     public float getUserBalance(String userName) {
         UserRecord user = userRepository.findByName(userName);
         if (user == null) {
-            System.out.println("User " + userName + " not found");
+//            System.out.println("User " + userName + " not found");
+            logger.warn("User not found: {}", userName);
             return 0.0f;
         }
         return user.getBalance();
@@ -60,24 +64,26 @@ public class TransactionService {
 
         if (isValid) {
             sender.setBalance(sender.getBalance() - transaction.getAmount());
-            recipient.setBalance(recipient.getBalance() + transaction.getAmount());
+            recipient.setBalance(recipient.getBalance() + transaction.getAmount() + incentiveAmount);
 
             userRepository.save(sender);
             userRepository.save(recipient);
-            System.out.println("Transaction processed successfully");
+            logger.info("Transaction processed successfully: {}", transactionRecord);
         }
         else {
-            System.out.println("Transaction " + transaction.getAmount() + " not valid");
+            logger.info("Transaction processing failed: {}, discarded.", transactionRecord);
         }
     }
 
     private boolean validateTransaction(UserRecord sender, UserRecord recipient, float amount) {
         if (sender == null || recipient == null) {
-            System.out.println("Invalid transaction: sender or recipient not found");
+//            System.out.println("Invalid transaction: sender or recipient not found");
+            logger.warn("Invalid transaction: sender/recipient is null.");
             return false;
         }
         if (sender.getBalance() < amount) {
-            System.out.println("Invalid transaction: sender " + sender.getName() + "balance insufficient: " + sender.getBalance());
+//            System.out.println("Invalid transaction: sender " + sender.getName() + "balance insufficient: " + sender.getBalance());
+            logger.warn("Invalid transaction: sender balance is less than the amount of balance.");
             return false;
         }
         return true;
