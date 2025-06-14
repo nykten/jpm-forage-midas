@@ -26,8 +26,7 @@ public class TransactionRecord {
     @Column(nullable = false)
     private float amount;
 
-    @Column(nullable = false)
-    private float incentiveAmount;
+
 
     @Column(nullable = false)
     private LocalDateTime timestamp;
@@ -37,11 +36,11 @@ public class TransactionRecord {
 
     protected TransactionRecord() {}
 
-    public TransactionRecord(UserRecord sender, UserRecord recipient, float amount, float incentiveAmount, boolean valid) {
+    public TransactionRecord(UserRecord sender, UserRecord recipient, float amount, boolean valid) {
         this.sender = sender;
         this.recipient = recipient;
         this.amount = amount;
-        this.incentiveAmount = incentiveAmount;
+
         this.timestamp = LocalDateTime.now();
         this.valid = valid;
     }
@@ -62,9 +61,7 @@ public class TransactionRecord {
         return amount;
     }
 
-    public float getIncentiveAmount() {
-        return incentiveAmount;
-    }
+
 
     public LocalDateTime getTimestamp() {
         return timestamp;
@@ -77,7 +74,7 @@ public class TransactionRecord {
     @Override
     public String toString() {
         return String.format("TransactionRecord[id=%d, sender='%s', recipient='%s', amount='%f', incentiveAmount='%f', valid'%b', timestamp='%s']",
-                id, sender.getName(), recipient.getName(), amount, incentiveAmount, valid);
+                id, sender.getName(), recipient.getName(), amount, valid);
 
     }
 }
