@@ -10,27 +10,29 @@ import java.time.LocalDateTime;
 public class TransactionRecord {
 
     @Id
-    @GeneratedValue()
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     // a user as UserRecord obj as the sender
     @ManyToOne
+    @JoinColumn(name = "sender_id", nullable = false)
     private UserRecord sender;
 
     // another user as UserRecord obj as the recipient
     @ManyToOne
+    @JoinColumn(name = "recipient_id", nullable = false)
     private UserRecord recipient;
 
     @Column(nullable = false)
     private float amount;
 
-    @Column
+    @Column(nullable = false)
     private float incentiveAmount;
 
-    @Column
+    @Column(nullable = false)
     private LocalDateTime timestamp;
 
-    @Column
+    @Column(nullable = false)
     private boolean valid;
 
     protected TransactionRecord() {}
