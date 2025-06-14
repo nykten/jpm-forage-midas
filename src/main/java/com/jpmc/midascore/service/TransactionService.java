@@ -1,24 +1,29 @@
 package com.jpmc.midascore.service;
 
+import com.jpmc.midascore.foundation.Incentive;
 import com.jpmc.midascore.repository.TransactionRepository;
 import org.h2.engine.User;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jpmc.midascore.entity.TransactionRecord;
 import com.jpmc.midascore.entity.UserRecord;
 import com.jpmc.midascore.foundation.Transaction;
 import com.jpmc.midascore.repository.UserRepository;
-import org.springframework.transaction.annotation.Transactional;
+import com.jpmc.midascore.repository.TransactionRepository;
+
 
 
 @Service
 public class TransactionService {
     private final UserRepository userRepository;
     private final TransactionRepository transactionRepository;
+    private final IncentiveService incentiveService;
 
-    public TransactionService(UserRepository userRepository, TransactionRepository transactionRepository) {
+    public TransactionService(UserRepository userRepository, TransactionRepository transactionRepository, IncentiveService incentiveService) {
         this.userRepository = userRepository;
         this.transactionRepository = transactionRepository;
+        this.incentiveService = incentiveService;
     }
 
     public float getUserBalance(String userName) {
@@ -46,7 +51,11 @@ public class TransactionService {
 
         boolean isValid = validateTransaction(sender, recipient,transaction.getAmount());
 
-        TransactionRecord transactionRecord = new TransactionRecord(sender, recipient,transaction.getAmount(), isValid);
+        // get incentive amount
+        Incentive incentive = incentiveService.getIncentive(transaction);
+        float incentiveAmount = incentive.getAmount();
+
+        TransactionRecord transactionRecord = new TransactionRecord(sender, recipient,transaction.getAmount(), incentiveAmount, isValid);
         transactionRepository.save(transactionRecord);
 
         if (isValid) {
