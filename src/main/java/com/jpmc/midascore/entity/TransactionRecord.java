@@ -76,7 +76,7 @@ public class TransactionRecord {
 
     @Override
     public String toString() {
-        return String.format("TransactionRecord[id=%d, sender='%s', recipient='%s', amount='%f', incentiveAmount='%f', valid'%b', timestamp='%s']",
+        return String.format("TransactionRecord[id=%d, sender='%s', recipient='%s', amount='%f', incentiveAmount='%f', valid'%b']",
                 id, sender.getName(), recipient.getName(), amount, incentiveAmount, valid);
 
     }
