@@ -14,3 +14,6 @@ spring:
         spring.json.value.default.type: com.jpmc.midascore.foundation.Transaction
 general:
   kafka-topic: midas-topic
+
+server:
+  port: 33400
